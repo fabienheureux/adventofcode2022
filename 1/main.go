@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -15,7 +16,7 @@ func check(e error) {
 }
 
 func getMax(elves []string) int {
-	max := 0
+	var sums []int
 	for i := 0; i < len(elves); i++ {
 		sum := 0
 		elve := strings.Split(elves[i], "\n")
@@ -27,12 +28,23 @@ func getMax(elves []string) int {
 				sum += value
 			}
 		}
-		if sum >= max {
-			max = sum
+
+		if len(sums) > 3 {
+			sums[3] = sum
+		} else {
+			sums = append(sums, sum)
 		}
+
+		sort.Sort(sort.Reverse(sort.IntSlice(sums)))
 	}
 
-	return max
+	topThreeSum := 0
+
+	for i := 0; i < 3; i++ {
+		topThreeSum += sums[i]
+	}
+
+	return topThreeSum
 }
 
 func main() {
