@@ -24,11 +24,11 @@ func getScore(play string) int {
 }
 
 func checkWinner(opponent string, self string) bool {
-	if opponent == "A" && self == "Z" {
+	if opponent == "A" && self == "C" {
 		return false
-	} else if opponent == "C" && self == "Y" {
+	} else if opponent == "C" && self == "B" {
 		return false
-	} else if opponent == "B" && self == "X" {
+	} else if opponent == "B" && self == "A" {
 		return false
 	}
 
@@ -45,13 +45,37 @@ func checkPlay(opponent string, self string) int {
 	return getScore(self)
 }
 
+func getPlay(opponent string, outcome string) string {
+	if outcome == "X" {
+		if opponent == "A" {
+			return "C"
+		} else if opponent == "B" {
+			return "A"
+		} else if opponent == "C" {
+			return "B"
+		}
+	} else if outcome == "Y" {
+		return opponent
+	}
+
+	if opponent == "A" {
+		return "B"
+	} else if opponent == "B" {
+		return "C"
+	} else if opponent == "C" {
+		return "A"
+	}
+
+	return ""
+}
+
 func process(rounds []string) int {
 	total := 0
 	for i := 0; i < len(rounds); i++ {
 		round := rounds[i]
 		if round != "" {
 			opponent := strings.Split(round, " ")[0]
-			self := strings.Split(round, " ")[1]
+			self := getPlay(strings.Split(round, " ")[0], strings.Split(round, " ")[1])
 			total += checkPlay(opponent, self)
 		}
 	}
