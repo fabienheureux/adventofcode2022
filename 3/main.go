@@ -62,21 +62,58 @@ func getRuckSackContent(rawRuckSack string) int {
 	return computePrioritiesSum(priorities)
 }
 
-func process(rounds []string) int {
-	total := 0
+func findBadge(group [][]string) string {
+	newGroup := [][]string{}
+	// Condition d'arrêt, lorsque la liste ne contient plus qu'un badge, on le retourne
+	if len(group) == 1 {
+		return group[0][0]
+	}
 
-	for i := 0; i < len(rounds); i++ {
-		if rounds[i] != "" {
-			total += getRuckSackContent(rounds[i])
+	// On itère sur les elfes du groupe (3)
+	for i := 0; i < len(group)-1; i++ {
+		elve := group[i]
+		newGroup = append(newGroup, []string{})
+
+		// On itère sur le sac à d
+		for j := 0; j < len(elve); j++ {
+			if find(elve[j], group[i+1]) {
+				newGroup[i] = append(newGroup[i], elve[j])
+			}
 		}
 	}
 
-	return total
+	return findBadge(newGroup)
+}
+
+func process(rounds []string) int {
+	// Initialisation des variables
+	groups := [][][]string{}
+	group := [][]string{}
+	badges := []string{}
+
+	// Consitution des groupes
+	for i := 0; i < len(rounds); i++ {
+		group = append(group, strings.Split(rounds[i], ""))
+
+		if i%3 == 2 {
+			groups = append(groups, group)
+			group = [][]string{}
+		}
+	}
+
+	// Pour chaque groupe, détermination du badge
+	for i := 0; i < len(groups); i++ {
+		group = groups[i]
+		badges = append(badges, findBadge(group))
+	}
+
+	return computePrioritiesSum(badges)
 }
 
 func main() {
 	dat, err := os.ReadFile("./input")
-	fmt.Println(process(strings.Split(string(dat), "\n")))
+	res := process(strings.Split(string(dat), "\n"))
+	fmt.Println(res)
 
 	check(err)
 }
